@@ -11,6 +11,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableContainer from '@material-ui/core/TableContainer'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 
 const styles = theme =>({
@@ -21,19 +22,25 @@ const styles = theme =>({
   },
   table:{
     minWidth:1080
+  },
+  progress:{
+    margin: theme.spacing.uint * 2
   }
 })
 
 
 
 class App extends Component{
-
+ 
   state={
-    customers:""
+    customers:"",
+    completed:0
   };
   
   
   componentDidMount(){
+    this.timer = setInterval(this.progress, 20);
+
     this.callApi()
       //body로 담은 고객 목록을 받아서 
       //이 목록을 state로 설정해주는것
@@ -52,6 +59,11 @@ class App extends Component{
     return body;
   }
 
+  progress = () =>{
+    const { completed} = this.state;
+    this.setState({completed: completed >= 100 ? 0 : completed +1});
+  }
+
   render(){
     const {classes}=this.props;
     return (
@@ -67,7 +79,13 @@ class App extends Component{
           </TableHead>
           <TableBody>
           {this.state.customers ? this.state.customers.map(c =>{return(<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender}/>);
-          }) : ""}
+          }) : 
+          <TableRow>
+            <TableCell colspan="6" align="center">
+            <CircularProgress className={classes.progress} varint="determinate" value={this.state.completed}/>
+            </TableCell>
+          </TableRow>
+          }
         </TableBody>
         </Paper>
     );
