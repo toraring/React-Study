@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Customer from './components/Customer';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,47 +13,47 @@ import Paper from '@material-ui/core/Paper';
 import TableContainer from '@material-ui/core/TableContainer'
 
 
-const useStyles = makeStyles({
+const styles = theme =>({
   root:{
     width:'100%',
+    marginTop:theme.spacing.uint *3,
     overflowX:"auto"
   },
   table:{
-    minWidth: 1080
+    minWidth:1080
   }
 })
 
 
 
-const customers = [
-  {
-    'id': 1,
-    'image': 'https://placeimg.com/64/64/1',
-    'name': '홍길동',
-    'birthday': '950712',
-    'gender': '남자'
+class App extends Component{
 
-  },
-  {
-    'id': 2,
-    'image': 'https://placeimg.com/64/64/2',
-    'name': '몽크',
-    'birthday': '000720',
-    'gender': '남자'
-
-  },
-  {
-    'id': 3,
-    'image': 'https://placeimg.com/64/64/3',
-    'name': '윤정',
-    'birthday': '950730',
-    'gender': '여자'
-
+  state={
+    customers:""
+  };
+  
+  
+  componentDidMount(){
+    this.callApi()
+      //body로 담은 고객 목록을 받아서 
+      //이 목록을 state로 설정해주는것
+      //결과적으로 body가 res라는 변수이름으로 바뀌고
+      //그것을 customers 변수값에 넣어줌
+      .then(res => this.setState({customers: res}))
+      //만약 오류가 발생하는경우 콘솔창에 오류를 보여준다.
+      .catch(err => console.log(err));
   }
-]
+  
+  callApi = async()=>{
+    //접속하고자 하는 api주소를 넣어줌
+    const response = await fetch('/api/customers');
+    //출력한 데이터를 json으로 만들어서 body라는 변수에 넣어줌
+    const body = await response.json();
+    return body;
+  }
 
-export default function App(){
-    const classes = useStyles;
+  render(){
+    const {classes}=this.props;
     return (
         <Paper className={classes.root}>
           <TableHead className={classes.table}>
@@ -66,8 +66,12 @@ export default function App(){
             </TableRow>
           </TableHead>
           <TableBody>
-          {customers.map(c =>{return(<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender}/>);})}
+          {this.state.customers ? this.state.customers.map(c =>{return(<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender}/>);
+          }) : ""}
         </TableBody>
         </Paper>
     );
+  }
 }
+
+export default withStyles(styles)(App);
