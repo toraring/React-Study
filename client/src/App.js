@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Customer from './components/Customer';
+import CustomerAdd from './components/CustomerAdd'
 
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -10,7 +11,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import TableContainer from '@material-ui/core/TableContainer'
+
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 
@@ -67,6 +68,7 @@ class App extends Component{
   render(){
     const {classes}=this.props;
     return (
+      <div>
         <Paper className={classes.root}>
           <TableHead className={classes.table}>
             <TableRow>
@@ -81,13 +83,15 @@ class App extends Component{
           {this.state.customers ? this.state.customers.map(c =>{return(<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender}/>);
           }) : 
           <TableRow>
-            <TableCell colspan="6" align="center">
+            <TableCell colSpan="6" align="center">
             <CircularProgress className={classes.progress} varint="determinate" value={this.state.completed}/>
             </TableCell>
           </TableRow>
           }
         </TableBody>
         </Paper>
+        <CustomerAdd/>
+      </div>
     );
   }
 }
